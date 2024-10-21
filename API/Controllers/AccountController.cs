@@ -42,8 +42,12 @@ public class AccountController(UserManager<AppUser> userManager, ITokenService t
             .Include(p => p.Photos)
                 .FirstOrDefaultAsync(x =>
                     x.NormalizedUserName == loginDto.Username.ToUpper());
+                    bool isValid = await userManager.CheckPasswordAsync(user,loginDto.Password);
+            
 
-        if (user == null || user.UserName == null) return Unauthorized("Invalid username");
+        if (user == null || user.UserName == null ) return Unauthorized("Invalid username");
+        
+        if (!isValid) return Unauthorized("Invalid Password");
 
         return new UserDto
         {
